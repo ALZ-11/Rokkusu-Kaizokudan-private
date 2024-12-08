@@ -1,3 +1,4 @@
+
 # Hackathon SmartDoc.ai 🚀
 
 Bienvenue à la première édition du Hackathon SmartDoc.ai, organisé par l'Association des Alumni de l'École Centrale Casablanca (ECC Alumni)!
