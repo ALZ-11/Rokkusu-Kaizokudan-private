@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-WORKDIR .
+WORKDIR /rag_multi_gemini
 
 COPY requirements.txt .
 
