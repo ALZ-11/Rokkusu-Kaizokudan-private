@@ -146,6 +146,21 @@ python prepare_training_data.py [data/csv_manual]
   - Naive Bayes
   - Artificial Neural Network (ANN)
 
+  - **Résumé des performances des modèles** :
+  
+  | Modèle                           | Accuracy | Precision | Recall   | F1-Score |
+  |----------------------------------|----------|-----------|----------|----------|
+  | **K-Nearest Neighbors (KNN)**    | 0.938889 | 0.941433  | 0.938889 | 0.938577 |
+  | **Support Vector Machine (SVM)** | 0.705556 | 0.736379  | 0.705556 | 0.708535 |
+  | **Decision Tree**                | 0.969444 | 0.969521  | 0.969444 | 0.969347 |
+  | **Random Forest**                | 0.969444 | 0.969654  | 0.969444 | 0.969403 |
+  | **XGBoost**                      | 0.969444 | 0.970706  | 0.969444 | 0.969348 |
+  | **Logistic Regression**          | 0.680556 | 0.691033  | 0.680556 | 0.680753 |
+  | **Naive Bayes**                  | 0.722222 | 0.735850  | 0.722222 | 0.712403 |
+  | **Artificial Neural Network (ANN)** | 0.897222 | 0.903691 | 0.897222 | 0.897544 |
+  | **Optimized ANN (Keras Tuner)**  | 0.930556 | 0.932593  | 0.930556 | 0.930051 |
+
+
 - **Étapes** :
   1. **Préparation des données** :
      - Analyse des corrélations.
