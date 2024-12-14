@@ -30,7 +30,7 @@ Fichier de journalisation : app.log
 1- Construisez l'image Docker :
 ```bash 
 docker build -t rag .
-
+```
 2- Exécutez le conteneur Docker :
 ```bash
 docker run -p 5000:5000
