@@ -189,7 +189,7 @@ python prepare_training_data.py [data/csv_manual]
 
 - **But** : Remplir la colonne `label` des fichiers CSV non labélisés.
 - **Actions** :
-  - Utilise les poids sauvegardés pour prédire les labels.
+  - Utilise les poids sauvegardés du meilleur modèle (XGBoost) pour prédire les labels.
   - Génère les fichiers labélisés dans `data/csv_model/`.
 
 #### Commande à exécuter :
