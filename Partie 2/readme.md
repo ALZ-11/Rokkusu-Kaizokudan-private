@@ -18,8 +18,25 @@ L'application suit un processus clair :
 
 L'application est construite avec Streamlit pour l'interface interactive, utilise le SDK de Google Generative AI pour interagir avec les modèles Gemini et exploite LlamaIndex pour le traitement et l'indexation des documents. Les documents sont divisés en blocs de 512 tokens (avec un chevauchement de 50 tokens) pour une intégration et une requête optimales. Les embeddings sont générés à l'aide des modèles d'intégration de Gemini pour une représentation sémantique précise. De plus, un système de journalisation intégré enregistre les activités de l'application et les erreurs pour faciliter le débogage.  
 
+## Configuration
+Les paramètres de l'application sont définis dans la classe AppConfig :
+
+Taille des blocs : 512 tokens (par défaut)
+Limite de tokens : 1024 tokens par réponse
+Température : 0,3 (valeur par défaut pour la créativité)
+Fichier de journalisation : app.log
+
 ## Déploiement avec Docker  
-Construisez l'image Docker :
+1- Construisez l'image Docker :
 ```bash 
-docker build -t gemini-chat-app .
+docker build -t rag .
+
+2- Exécutez le conteneur Docker :
+```bash
+docker run -p 5000:5000
+
+3 - Accédez à l'application via votre navigateur à l'adresse suivante :
+```bash
+http://localhost:5000
+
 
