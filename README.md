@@ -1,64 +1,226 @@
+# Hackathon SmartDoc.ai
 
-# Hackathon SmartDoc.ai 🚀
-
-Bienvenue à la première édition du Hackathon SmartDoc.ai, organisé par l'Association des Alumni de l'École Centrale Casablanca (ECC Alumni)!
-
-## À propos du Hackathon 📋
-
-Ce hackathon se concentre sur le traitement automatique du langage naturel (NLP) et l'analyse de documents, en particulier les rapports SFCR des assureurs. Les participants devront développer des solutions innovantes pour:
-
-1. Extraire et nettoyer le contenu pertinent des rapports PDF
-2. Construire une architecture RAG (Retrieval-Augmented Generation) pour répondre à des questions spécifiques
-3. [BONUS] Extraire les tableaux des rapports sous une forme structurée et lisible
-
-Pour plus de détails sur les objectifs, les tâches et les exigences techniques, veuillez consulter le fichier [Instructions.docx](Instructions.docx).
-
-## Prix 🏆
-
-- **1er Prix**: 2500 MAD
-- **2ème Prix**: 1000 MAD
-
-## Comment Participer 🔧
-
-### Soumission des Projets
-
-1. Forkez ce repository
-2. Créez un nouveau dossier avec le nom de votre équipe
-3. Ajoutez votre travail dans ce dossier
-4. Créez une Pull Request pour soumettre votre projet
-
-### Structure du Dossier d'Équipe
-
-Votre dossier doit contenir:
-- Un fichier README.md avec:
-  - Les noms des membres de l'équipe
-  - Une description de votre solution
-  - Les instructions d'installation et d'utilisation
-- Vos notebooks Jupyter
-- Le code source de votre solution
-- Toute documentation supplémentaire
-
-## Ressources 📚
-
-- [helper.py](helper.py): Code auxiliaire pour le traitement des fichiers JSON
-- [Trame_questions.pdf](Trame_questions.pdf): Ensemble de questions tests pour évaluer la performance de votre système RAG
-- [data/](data/): Dossier contenant les données d'exemple
-  - [data/pdfs/](data/pdfs/): Rapports SFCR au format PDF
-  - [data/ocr/](data/ocr/): Fichiers JSON produits par l'OCR
-
-Le fichier Trame_questions.pdf contient une série de questions prédéfinies qui seront utilisées pour évaluer la performance de votre système RAG. Assurez-vous que votre solution peut traiter efficacement ces questions tests.
-
-## Dates Importantes ⏰
-
-- **Début du Hackathon**: Samedi 7 décembre 2024
-- **Date limite de soumission**: Samedi 14 décembre 2024 à 23:59 (heure marocaine)
-
-Les participants doivent soumettre leurs pull requests avant la date limite. Toute soumission après cette date ne sera pas prise en compte.
-
-## Contact 📧
-
-Pour toute question ou clarification, n'hésitez pas à ouvrir une issue dans ce repository.
+**Membres du groupe :**
+- **HIROUCHE Walid** : [walid.hirouche@centrale-casablanca.ma](mailto:walid.hirouche@centrale-casablanca.ma)
+- **BENKIRANE Reda** : [reda.benkirane@centrale-casablanca.ma](mailto:reda.benkirane@centrale-casablanca.ma)
 
 ---
 
-Organisé avec ❤️ par ECC Alumni
+## **Résumé**
+
+Ce projet a été réalisé dans le cadre du **Hackathon SmartDoc.ai**, et son objectif principal est de résoudre les problématiques liées à l’analyse des rapports SFCR grâce à des outils de Machine Learning et une architecture RAG (**Retrieval-Augmented Generation**).
+
+---
+
+## **Problématique**
+
+Lorsqu'un Data Scientist travaille sur des rapports au format PDF, il est souvent confronté à des défis liés à la qualité des résultats des OCR :
+1. Les **informations inutiles** (bas/hauts de page, contenus répétitifs) perturbent l’analyse.
+2. Les données **non structurées** (ex. tableaux, graphes) nécessitent un travail supplémentaire pour en extraire des informations exploitables.
+
+### Pourquoi ne pas trier par longueur de texte (`len`) ?
+Une méthode basique comme un tri par la longueur des textes n'est pas efficace. Par exemple :
+- Certains **paragraphes courts** peuvent être plus courts que certains **titres**, créant une zone grise difficile à distinguer.
+- Les **bas de page répétitifs**, malgré leur contenu inutile, peuvent avoir une longueur suffisante pour être classés comme des titres.
+
+C’est pourquoi nous avons développé une approche hybride combinant des manipulations manuelles et des modèles de Machine Learning.
+
+---
+
+## **Note importante sur les scripts**
+
+Tous les scripts sont **flexibles** et acceptent un chemin en argument lors de leur exécution. Si aucun chemin n'est spécifié, un **chemin par défaut** sera utilisé. Cela vous évite de modifier constamment les scripts pour changer les dossiers de travail.
+
+**Exemple** :
+```bash
+python csv_to_txt.py data/csv_model
+```
+Si le chemin `data/csv_model` n'est pas spécifié, le script utilisera par défaut `data/csv_model`.
+
+---
+
+## **Architecture du projet**
+
+Le projet est structuré comme suit :
+
+```
+.
+├── classification
+│   ├── [requirements.txt](classification/requirements.txt)
+│   ├── [training_model.ipynb](classification/training_model.ipynb)
+│   └── weights
+│       ├── pca.pkl
+│       ├── scaler.pkl
+│       └── xgboost_classifier.json
+├── data
+│   ├── csv
+│   │   ├── allianz-1-to-94.csv
+│   │   ...
+│   │   └── covea-output-1-to-98.csv
+│   ├── csv_manual
+│   │   ├── axa-output-1-to-71.csv
+│   │   └── training_data.csv
+│   ├── csv_model
+│   │   ├── predicted_allianz-1-to-94.csv
+│   │   ...
+│   │   └── predicted_covea-output-1-to-98.csv
+│   ├── json
+│   │   ├── allianz-1-to-94.json
+│   │   ...
+│   │   └── covea-output-1-to-98.json
+│   └── txt
+│       ├── predicted_allianz-1-to-94.txt
+│       ...
+│       └── predicted_covea-output-1-to-98.txt
+├── [csv_to_txt.py](csv_to_txt.py)
+├── [helper_improved.py](helper_improved.py)
+├── [predict_labels.py](predict_labels.py)
+├── [prepare_training_data.py](prepare_training_data.py)
+└── README.md
+```
+
+---
+
+## **Étapes détaillées**
+
+### 1. **Conversion des JSON en CSV : [helper_improved.py](helper_improved.py)**
+
+- **But** : Convertir les fichiers JSON produits par l’OCR en CSV structurés pour faciliter le traitement ultérieur.
+- **Ajouts importants** :
+  - Une colonne `id` pour conserver l’ordre des lignes, utile pour le reclassement après modification de l'ordre des lignes sur Excel.
+  - Une colonne `label` vide pour permettre une classification manuelle dans Excel.
+
+#### Commande à exécuter :
+```bash
+python helper_improved.py [data/json]
+```
+
+#### Résultat :
+- Les fichiers JSON dans `data/json/` sont convertis en fichiers CSV et enregistrés dans `data/csv/`.
+
+---
+
+### 2. **Classification manuelle dans Excel**
+
+#### Étapes recommandées :
+1. **Trier sur la colonne `chars`** :
+   - Permet de regrouper les lignes avec peu de caractères, souvent inutiles, et de distinguer les paragraphes et titres.
+2. **Trier sur la colonne `text`** :
+   - Regroupe les lignes avec un format similaire (ex. `B.1`, `B.2`, `/`), pour classifier les titres par blocs.
+3. **Finaliser avec la colonne `label`** :
+   - Afin d'identifiez les lignes encore non classées si on a encore de la patience.
+4. **Rétablir l’ordre initial** :
+   - On utilise la colonne `id` pour cela.
+
+**Attention** : Pas besoin de labéliser toutes les lignes. Le fichier suivant ne prendra que les lignes déjà classées dans les 4 fichiers et les fusionera dans un seul fichier d'entraînement `training_data.csv`.
+
+---
+
+### 3. **Préparation des données d’entraînement : [prepare_training_data.py](prepare_training_data.py)**
+
+- **But** : Générer un fichier `training_data.csv` avec uniquement les lignes labélisées.
+- **Actions** :
+  - Concatène tous les fichiers de `data/csv_manual/`.
+  - Supprime les colonnes inutiles à l'entraiînement : `id`, `text`, `num_page`.
+
+#### Commande à exécuter :
+```bash
+python prepare_training_data.py [data/csv_manual]
+```
+
+#### Résultat :
+- Un fichier `training_data.csv` est généré dans `data/csv_manual/`.
+
+---
+
+### 4. **Entraînement du modèle : [training_model.ipynb](classification/training_model.ipynb)**
+
+- **But** : Entraîner plusieurs modèles de Machine Learning et choisir le meilleur pour la classification.
+- **Modèles testés** :
+  - K-Nearest Neighbors (KNN)
+  - Support Vector Machine (SVM)
+  - Decision Tree
+  - Random Forest
+  - XGBoost
+  - Logistic Regression
+  - Naive Bayes
+  - Artificial Neural Network (ANN)
+
+  - **Résumé des performances des modèles** :
+  
+  | Modèle                           | Accuracy | Precision | Recall   | F1-Score |
+  |----------------------------------|----------|-----------|----------|----------|
+  | **K-Nearest Neighbors (KNN)**    | 0.938889 | 0.941433  | 0.938889 | 0.938577 |
+  | **Support Vector Machine (SVM)** | 0.705556 | 0.736379  | 0.705556 | 0.708535 |
+  | **Decision Tree**                | 0.969444 | 0.969521  | 0.969444 | 0.969347 |
+  | **Random Forest**                | 0.969444 | 0.969654  | 0.969444 | 0.969403 |
+  | **XGBoost**                      | 0.969444 | 0.970706  | 0.969444 | 0.969348 |
+  | **Logistic Regression**          | 0.680556 | 0.691033  | 0.680556 | 0.680753 |
+  | **Naive Bayes**                  | 0.722222 | 0.735850  | 0.722222 | 0.712403 |
+  | **Artificial Neural Network (ANN)** | 0.897222 | 0.903691 | 0.897222 | 0.897544 |
+  | **Optimized ANN (Keras Tuner)**  | 0.930556 | 0.932593  | 0.930556 | 0.930051 |
+
+
+- **Étapes** :
+  1. **Préparation des données** :
+     - Analyse des corrélations.
+     - Traitement des valeurs aberrantes.
+     - Application de PCA pour réduire la dimensionnalité.
+     - Scaling et équilibrage des classes (over/undersampling).
+  2. **Évaluation des modèles** :
+     - Validation croisée.
+     - Meilleur modèle : **XGBoost** avec une précision de **97%**.
+  3. **Sauvegarde des poids** :
+     - Modèle, PCA, et scaler sauvegardés dans `classification/weights/`.
+
+#### Commandes pour exécuter :
+1. Installer les dépendances :
+   ```bash
+   pip install -r classification/requirements.txt
+   ```
+2. Lancer le notebook :
+   ```bash
+   jupyter notebook classification/training_model.ipynb
+   ```
+
+---
+
+### 5. **Prédiction automatique : [predict_labels.py](predict_labels.py)**
+
+- **But** : Remplir la colonne `label` des fichiers CSV non labélisés.
+- **Actions** :
+  - Utilise les poids sauvegardés pour prédire les labels.
+  - Génère les fichiers labélisés dans `data/csv_model/`.
+
+#### Commande à exécuter :
+```bash
+python predict_labels.py [data/csv]
+```
+
+#### Résultat :
+- Les fichiers prédits sont enregistrés dans `data/csv_model/`.
+
+---
+
+### 6. **Génération des fichiers texte : [csv_to_txt.py](csv_to_txt.py)**
+
+- **But** : Convertir les CSV labélisés en fichiers texte pour le RAG.
+- **Contenu des fichiers texte** :
+  - **Titres** : Précédés de `#`.
+  - **Paragraphes** : Simples.
+  - **Séparations de page** : `=======page <num>=======`.
+
+#### Commande à exécuter :
+```bash
+python csv_to_txt.py [data/csv_model]
+```
+
+#### Résultat :
+- Les fichiers texte sont générés dans `data/txt/`.
+
+---
+
+## **Liens utiles**
+
+- [Dépôt GitHub de la compétition](https://github.com/AlumniECC/Hackathon_Smartdoc.ai)
+- [Questions pour la RAG](https://centralecasablanca-my.sharepoint.com/:x:/g/personal/imad_zaoug_centrale-casablanca_ma/EWvYqsFs2oBKoSWg2X0Q2zcBStATPMiXvYKxVztwwfC3mA)
