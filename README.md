@@ -20,7 +20,7 @@ Lorsqu'un Data Scientist travaille sur des rapports au format PDF, il est souven
 1. Les **informations inutiles** (bas/hauts de page, contenus répétitifs) perturbent l’analyse.
 2. Les données **non structurées** (ex. tableaux, graphes) nécessitent un travail supplémentaire pour en extraire des informations exploitables.
 
-# Partie 1
+# Partie 1 : Création des fichiers pour le **RAG**
 
 ### Pourquoi ne pas trier par longueur de texte (`len`) ?
 Une méthode basique comme un tri par la longueur des textes n'est pas efficace. Par exemple :
