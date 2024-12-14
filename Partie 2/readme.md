@@ -33,10 +33,12 @@ docker build -t rag .
 ```
 2- Exécutez le conteneur Docker :
 ```bash
-docker run -p 5000:5000
+docker run -p 5000:5000 rag
+```
 
 3 - Accédez à l'application via votre navigateur à l'adresse suivante :
 ```bash
 http://localhost:5000
+```
 
 
