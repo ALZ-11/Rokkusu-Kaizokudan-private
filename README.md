@@ -3,7 +3,9 @@
 **Membres du groupe :**
 - **HIROUCHE Walid** : [walid.hirouche@centrale-casablanca.ma](mailto:walid.hirouche@centrale-casablanca.ma)
 - **BENKIRANE Reda** : [reda.benkirane@centrale-casablanca.ma](mailto:reda.benkirane@centrale-casablanca.ma)
+- **LOZI Adam** : [adam.lozi@centrale-casablanca.ma](mailto:adam.lozi@centrale-casablanca.ma)
 - **El OTMANI Hamza*** : [hamza.elotmani@centrale-casablanca.ma](mailto:hamza.elotmani@centrale-casablanca.ma)
+
 ---
 
 ## **Résumé**
@@ -17,6 +19,8 @@ Ce projet a été réalisé dans le cadre du **Hackathon SmartDoc.ai**, et son o
 Lorsqu'un Data Scientist travaille sur des rapports au format PDF, il est souvent confronté à des défis liés à la qualité des résultats des OCR :
 1. Les **informations inutiles** (bas/hauts de page, contenus répétitifs) perturbent l’analyse.
 2. Les données **non structurées** (ex. tableaux, graphes) nécessitent un travail supplémentaire pour en extraire des informations exploitables.
+
+# Partie 1
 
 ### Pourquoi ne pas trier par longueur de texte (`len`) ?
 Une méthode basique comme un tri par la longueur des textes n'est pas efficace. Par exemple :
@@ -189,7 +193,7 @@ python prepare_training_data.py [data/csv_manual]
 
 - **But** : Remplir la colonne `label` des fichiers CSV non labélisés.
 - **Actions** :
-  - Utilise les poids sauvegardés du meilleur modèle (XGBoost) pour prédire les labels.
+  - Utilise les poids sauvegardés pour prédire les labels.
   - Génère les fichiers labélisés dans `data/csv_model/`.
 
 #### Commande à exécuter :
@@ -224,3 +228,219 @@ python csv_to_txt.py [data/csv_model]
 
 - [Dépôt GitHub de la compétition](https://github.com/AlumniECC/Hackathon_Smartdoc.ai)
 - [Questions pour la RAG](https://centralecasablanca-my.sharepoint.com/:x:/g/personal/imad_zaoug_centrale-casablanca_ma/EWvYqsFs2oBKoSWg2X0Q2zcBStATPMiXvYKxVztwwfC3mA)
+
+# Extraction et Reconstruction des Tableaux (Partie Bonus)
+
+Cette partie bonus du projet vise à extraire les tableaux des documents PDF, les segmenter, puis les traiter pour extraire leurs données textuelles sous une forme exploitable.
+
+---
+
+## **Structure des dossiers**
+```
+.
+bonus/
+├── cropped_images
+│   ├── Allianz-VIE-SFCR-2022
+│   │   ├── page_10_1.png
+│   │   ...
+│   │   └── page_91_1.png
+│   ├── AXA_SA_SFCR_FY22_VF
+│   │   ├── page_10_1.png
+│   │    ...
+│   │   └── page_69_2.png
+│   └── Rapport-SFCR-Groupe-CAMCA-2022
+│       ├── page_10_1.png
+│       ...
+│       └── page_48_2.png
+├── extracted_tables
+│   ├── Rapport-SFCR-Groupe-CAMCA-2022-page_10_1.csv
+│   └── Rapport-SFCR-Groupe-CAMCA-2022-page_10_1.png
+├── images
+│   ├── Allianz-VIE-SFCR-2022
+│   │   ├── page_10.png
+│   │   ...
+│   │   └── page_94.png
+│   ├── AXA_SA_SFCR_FY22_VF
+│   │   ├── page_10.png
+│   │   ...
+│   │   └── page_71.png
+│   └── Rapport-SFCR-Groupe-CAMCA-2022
+│       ├── page_10.png
+│       ...
+│       └── page_49.png
+├── pdf
+│   ├── Allianz-VIE-SFCR-2022.pdf
+│   ├── AXA_SA_SFCR_FY22_VF.pdf
+│   ├── Rapport-SFCR-Groupe-CAMCA-2022.pdf
+│   └── sfcr_covea_2022.PDF
+├── pdf_to_images.py
+├── process_table_image.py
+├── requirements.txt
+└── segment_tables.py
+
+11 directories, 323 files
+```
+---
+
+## **Dépendances**
+
+Pour installer les dépendances, utilisez :
+```bash
+pip install -r bonus/requirements.txt
+```
+---
+
+## **Scripts Python**
+
+Cette partie utilise trois scripts principaux :
+
+### **1. Conversion des PDF en images : [pdf_to_images.py](bonus/pdf_to_images.py)**
+
+Le script convertit les fichiers PDF en images, chaque page étant une image distincte.
+
+#### **Commandes :**
+```bash
+python pdf_to_images.py [bonus/pdf]
+```
+
+- **Chemin optionnel** : Par défaut, le script utilise le dossier `bonus/pdf/` pour les fichiers PDF.
+- **Résultat attendu** :
+  - Les images générées sont enregistrées dans `bonus/images/<nom_du_pdf>/`.
+  - Si une image existe déjà, elle n'est pas recréée pour éviter les doublons.
+
+---
+
+### **2. Segmentation des tableaux : [segment_tables.py](bonus/segment_tables.py)**
+
+Ce script utilise un modèle YOLO pour détecter les tableaux dans les images générées, les découper, et les sauvegarder.
+
+#### **Commandes :**
+```bash
+python segment_tables.py [bonus/images]
+```
+
+- **Chemin optionnel** : Par défaut, le script traite les images dans `bonus/images/`.
+- **Résultat attendu** :
+  - Les tableaux segmentés sont enregistrés dans `bonus/cropped_images/<nom_du_pdf>/`.
+  - Chaque tableau est sauvegardé comme une image séparée, nommée `page_<num>_<index>.png`.
+
+---
+
+### **3. Traitement des tableaux segmentés : [process_table_image.py](process_table_image.py)**
+
+Ce script prend une image contenant un tableau segmenté, tente de détecter les colonnes, puis applique l’OCR pour reconstruire les données sous forme de tableau exploitable.
+
+#### **Commandes :**
+```bash
+python process_table_image.py [bonus/cropped_images/example_image.png]
+```
+
+- **Chemin optionnel** : Par défaut, le script traite l’image `bonus/cropped_images/example_image.png`.
+- **Résultat attendu** :
+  - Une image annotée avec des lignes verticales pour les colonnes dans `bonus/extracted_tables/`.
+  - Les données extraites sont sauvegardées dans un fichier CSV dans `bonus/extracted_tables/`.
+
+---
+
+## **Processus détaillé**
+
+### **Étape 1 : Conversion des PDF en images**
+
+Le script `pdf_to_images.py` transforme chaque page d’un PDF en une image distincte. Par exemple :
+
+---
+
+### **Étape 2 : Détection des tableaux**
+
+Le script `segment_tables.py` détecte les tableaux dans une image de page grâce au modèle YOLO. Chaque tableau est extrait et sauvegardé comme une image séparée.
+
+**Image avec un tableau segmenté :**
+![Tableau segmenté](imgs/annotated_image.png)
+
+**Image du tableau seul :**
+![Tableau segmenté](imgs/cropped_table_image.png)
+
+---
+
+### **Étape 3 : Reconstruction des données**
+
+Le script `process_table_image.py` utilise l’OCR pour extraire les données textuelles du tableau. En analysant les lignes verticales, il tente de détecter les colonnes et reconstruit un tableau ligne par ligne.
+
+**Données extraites du tableau :**
+```plaintext
+                                                line
+0  en millions d’euros FY 2021 FY 2022 Différence...
+1            Risque de Marché 21 681 22 522 +4% +841
+2               Risque Non Vie 1 756 1 893 +8 % +136
+3                Risque de Crédit 681 811 +19 % +130
+4                         Risque Vie 318 332 +4% +14
+5                       Risque Santé 41 53 +27 % +11
+```
+
+Ces données sont sauvegardées dans un fichier CSV (`bonus/extracted_tables/<nom_du_tableau>.csv`).
+
+---
+
+## **Problèmes rencontrés et limitations**
+
+1. **Colonnes non détectées correctement** :
+   - Les lignes verticales ne sont pas toujours visibles dans les tableaux, rendant la séparation en colonnes difficile.
+   - On a eu l'idée d'utiliser une méthode qu'on a basé sur la détection de variations de clarté (`delta_y`), où on regarde si dans un (`delta_y`) assez réduit, tous les pixels de la longueurs restent blancs, ce qui voudrais dire que c'est une séparation entre deux colonnes, et donc on trace une ligne verticale noir pour aider l'ocr à mieux détecter les colonne, mais cette méthode s'est avérée partiellement efficace.
+
+2. **Résultats actuels** :
+   - Les lignes sont bien détectées.
+   - Les colonnes ne sont pas toujours reconstruites correctement.
+
+---
+
+## **Améliorations possibles**
+
+1. **Segmentation des colonnes** :
+   - Utiliser des approches basées sur des modèles plus avancés (par exemple, entraînés spécifiquement pour des tableaux sans lignes).
+   - Détecter les séparateurs implicites dans les tableaux via des techniques de clustering.
+
+2. **OCR plus robuste** :
+   - Tester des alternatives comme EasyOCR ou d’autres frameworks spécialisés.
+
+# Partie 2 : Chat with SFCR documents
+
+Cette application fournit une interface de chat interactive pour explorer et interroger des documents textuels à l'aide des modèles Gemini de Google Generative AI. Conçue pour gérer jusqu'à quatre fichiers texte simultanément, l'application permet des conversations intelligentes et contextuelles, simplifiant la recherche d'informations et l'analyse documentaire.  
+
+## Fonctionnalités  
+
+L'application s'appuie sur les modèles SOTA Gemini de Google Generative AI, incluant Gemini Pro, Pro Vision et Ultra. Elle prend en charge le téléversement de plusieurs documents (jusqu'à 4 fichiers) et les transforme en indices vectoriels à l'aide de LlamaIndex. Le moteur de chat personnalisé interagit avec les documents, offrant des réglages configurables pour la créativité (température), la limite de tokens et d'autres paramètres. L'interface interactive Streamlit facilite l'utilisation, permettant de téléverser des fichiers, de configurer des paramètres et de discuter avec les documents.  
+
+## Fonctionnement  
+
+L'application suit un processus clair :  
+1. **Configuration initiale** : L'application initialise les clés API, les modèles GEMINI et les indices vectoriels.  
+2. **Téléversement de documents** : Les utilisateurs téléversent des fichiers texte via la barre latérale (sidebar). Ces fichiers sont segmentés en blocs et indexés pour permettre une recherche et un traitement efficaces.  
+3. **Chat interactif** : Les utilisateurs posent des questions ou demandent des informations à partir des documents téléversés, et le système génère des réponses basées sur la similarité sémantique et l'inférence des modèles.  
+4. **Ajustements en temps réel** : Les paramètres des modèles et le contexte des conversations peuvent être modifiés dynamiquement pour affiner les réponses.  
+
+## Aperçu technique  
+
+L'application est construite avec Streamlit pour l'interface interactive, utilise le SDK de Google Generative AI pour interagir avec les modèles Gemini et exploite LlamaIndex pour le traitement et l'indexation des documents. Les documents sont divisés en blocs de 512 tokens (avec un chevauchement de 50 tokens) pour une intégration et une requête optimales. Les embeddings sont générés à l'aide des modèles d'intégration de Gemini pour une représentation sémantique précise. De plus, un système de journalisation intégré enregistre les activités de l'application et les erreurs pour faciliter le débogage.  
+
+## Configuration
+Les paramètres de l'application sont définis dans la classe AppConfig :
+
+Taille des blocs : 512 tokens (par défaut)
+Limite de tokens : 1024 tokens par réponse
+Température : 0,3 (valeur par défaut pour la créativité)
+Fichier de journalisation : app.log
+
+## Déploiement avec Docker  
+1- Construisez l'image Docker :
+```bash 
+docker build -t rag .
+```
+2- Exécutez le conteneur Docker :
+```bash
+docker run -p 5000:5000 rag
+```
+
+3 - Accédez à l'application via votre navigateur à l'adresse suivante :
+```bash
+http://localhost:5000
+```
