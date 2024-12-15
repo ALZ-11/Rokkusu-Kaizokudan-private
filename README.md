@@ -3,7 +3,6 @@
 **Membres du groupe :**
 - **HIROUCHE Walid** : [walid.hirouche@centrale-casablanca.ma](mailto:walid.hirouche@centrale-casablanca.ma)
 - **BENKIRANE Reda** : [reda.benkirane@centrale-casablanca.ma](mailto:reda.benkirane@centrale-casablanca.ma)
-- **LOZI Adam** : [adam.lozi@centrale-casablanca.ma](mailto:adam.lozi@centrale-casablanca.ma)
 - **El OTMANI Hamza*** : [hamza.elotmani@centrale-casablanca.ma](mailto:hamza.elotmani@centrale-casablanca.ma)
 
 ---
